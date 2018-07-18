@@ -16,39 +16,75 @@ import { Navbar, Nav, NavItem, NavLink, UncontrolledDropdown, DropdownToggle, Dr
 import EventsFilter from './EventsFilterComponent';
 import Checkbox from '@material-ui/core/Checkbox';
 import { easing } from '@material-ui/core/styles/transitions';
+import AssignEvent from './AssignEventComponent';
 
 
 class First extends Component
 {
 
+	
 
 	constructor()
 	{
 		
 		super();
+		this.assignBtn = this.assignBtn.bind(this);
 		this.state = {
 			data: null,
-			len: null,
+		
 			cookies: new Cookies,
 			events: null,
 			evlen: null,
 			myevents: null,
 			sev: null,
 			isSelected: false,
-			selectedRowIds: []
+			selectedRowIds: [],
+			x: 0,
+			selectedIds: [],
+			assignClicked: false
 		};
 	}
-	
-	handleClick(event)
+
+	assignBtn(event)
 	{
-		this.setState = ({isSelected: !this.state.isSelected});
+		this.setState({assignClicked: true});
+	}
+	
+	handleClick(event, i)
+	{ 
+		// console.log(i);
+		var present = 0;
+		this.state.selectedIds.map((id) => 
+			{i === id ? present = 1 : null}
+		);
+				
+			
+			
+		
+		
+		if(present !== 1)
+		{
+			this.setState({selectedIds: [...this.state.selectedIds, i]});
+		}
+		else if(present === 1){
+
+			const index = this.state.selectedIds.indexOf(i);
+    
+			if (index !== -1) {
+				console.log(this.state.selectedIds.splice(index, 1));
+				this.setState({selectedIds: this.state.selectedIds});
+			}
+		}
+		
+		
+		
 		const key = event.target.key;
 	}
 	
     
     componentDidMount()
 	{
-		console.log("componentDidMount");
+		
 		  fetch('http://203.17.194.45/eventApp/events/all')
 	    .then(results =>
 	      results.json()
@@ -63,7 +99,7 @@ class First extends Component
 	    )
 		.then(data => this.setState({events: data, evlen: data.length}));
 		
-		console.log("componentDidMount");
+		
 		  fetch('http://203.17.194.45/eventApp/events/userAgg')
 	    .then(results =>
 	      results.json()
@@ -76,14 +112,26 @@ class First extends Component
 	      results.json()
 	    )
 		.then(data => this.setState({sev: data}));
-    }
+	}
+	
+
+	// createCheck()
+	// {
+		
+	// 	return <Checkbox checked = {this.state.isSelected} id = {this.state.x} onChange = {this.handleClick}/>
+		
+	// }
     
     render()
 	{
-		var x = 0;
-
-		// console.log("Toooo");
-		// console.log(this.state.data);
+		if(this.state.assignClicked === true)
+		{
+			return(
+				<AssignEvent selectedIds = {this.state.selectedIds}/>
+			);
+		}
+		
+		console.log(this.state.selectedIds);
 
         var name =this.state.cookies.get('name');
         
@@ -107,8 +155,7 @@ class First extends Component
 			{
 				if(this.state.myevents[i].id === this.state.cookies.get('name'))
 				{
-					console.log('yy');
-					console.log(this.state.myevents[i].count);
+					
 					myeventscount = this.state.myevents[i].count;
 				}
 			}
@@ -118,8 +165,7 @@ class First extends Component
 		
 		if(this.state.events !== null)
         {
-            console.log("Events Filter");
-            console.log(this.state.events[0].id);
+           
         }
 
         if(this.state.data !== null)
@@ -132,7 +178,7 @@ class First extends Component
                 extraKeys = keys.splice(4,2);
 				extraValues = val.splice(4,2);
 				
-				console.log("Key" + keys[0]);
+				
 				if(extraValues[0] !== null && typeof extraValues[0] === 'object'){
 					
 					ob = <ExtractData values = {extraValues[0]} />
@@ -171,9 +217,12 @@ class First extends Component
 				{
 					return(
 						
-						<TableRow  onClick={event => this.handleClick(event, 1)}
+						<TableRow  onClick={event => this.handleClick(event, d.id)}
 											role="checkbox" 
-											selected={this.state.isSelected}>
+											selected={this.state.isSelected}
+											hover = {true}
+											
+											>
 							
 							{valuesMapped}
 							
@@ -187,7 +236,10 @@ class First extends Component
 								</Link>
 							</TableCell>
 							<TableCell>
-							<Checkbox onChange ={ this.handleClick }/>
+							<div>
+								<input type="checkbox" onChange={ this.handleChecked }/>
+								
+							</div>
 						</TableCell>
 						</TableRow>
 					);
@@ -195,11 +247,15 @@ class First extends Component
 
 				//If the event has already been assigned, no need to hyperlink to "assignevent" component
 				return(
+
+					
 						
-					<TableRow  onClick={event => this.handleClick(event, 1)}
+					<TableRow onClick={event => this.handleClick(event, d.id)}
 										role="checkbox" 
 										selected={this.state.isSelected}
-							   >
+										hover = {true}
+										
+							   			>
 							  
 						
 						{valuesMapped}
@@ -214,13 +270,18 @@ class First extends Component
 							
 						</TableCell>
 						<TableCell>
-							<Checkbox onChange ={ this.handleClick }/>
+						<div>
+							<input type="checkbox" />
+								
+							</div>
 						</TableCell>
 					</TableRow>
 				);
+
+				
             });
         
-			{x++};
+			
 
             if(this.state.cookies.get('name') == 'null')
             {
@@ -240,8 +301,7 @@ class First extends Component
 				if(this.state.myevents !== null){
 				
 					}
-					console.log("Yes");
-					console.log(myeventscount);
+				
                 return(
 					<div>
 
@@ -278,6 +338,7 @@ class First extends Component
 							</Nav>
 							</div>
 						</Navbar>
+						{this.state.selectedIds.length > 0 ? <button type="button" onClick = {this.assignBtn}>Assign The Selected Items</button> : null}
 
 						<Table  multiSelectable={true} onRowSelection={this.onRowSelection}> 
 							<TableHead>
@@ -307,12 +368,11 @@ class First extends Component
         }
 
         return(<div>Loading...</div>);
-    }
-
-	onRowSelection(rows)
-	{
-		console.log(rows);
 	}
+	
+	
+
+	
 
 }
 
