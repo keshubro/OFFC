@@ -1,15 +1,24 @@
 import React, { Component } from 'react';
-import {Nav, Navbar, NavbarBrand, NavbarNav, NavbarToggler, Collapse, NavItem, NavLink, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'mdbreact';
+import {Nav, Navbar, NavbarBrand, NavbarNav, NavbarToggler, Collapse, NavItem, UncontrolledDropdown, NavLink, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'mdbreact';
 import { BrowserRouter as Router } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 
 class NavbarFeatures extends React.Component {
+
+    
 
 
 
 
     render() {
+
+        
+
+
         return (
+            
+
                 <Navbar color="indigo" dark expand="sm">
                     <NavbarBrand href="/">
                         <strong>Edelweiss</strong>
@@ -31,6 +40,8 @@ class NavbarFeatures extends React.Component {
                    </Nav>
                 </Navbar>
 
+            
+               
         );
     }
 }

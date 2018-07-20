@@ -38,26 +38,21 @@ class Authentication extends Component
       results.json()
     )
     .then(data => this.setState({data: data, len: data.length}));
-    console.log(this.state.data);
+    
   }
 
   handleSubmit(event) {
-     //alert('A name was submitted: ' + this.state.value);
-
-
-      // console.log(cookies.get('myCat')); // Pacman
+     
 
      this.state.data.map((dd) =>
      {
        if(dd.name === this.state.value)
        {
          this.setState({valid: true, x: 1, value: dd.name, email: dd.email});
-         this.state.cookies.set('sevlevel', dd.severityAccessLevel, { path: '/' });
+         this.state.cookies.set('loggedin_user', dd, { path: '/' });
 
        }
-       // else{
-       //   this.setState({x: 2, value: null, email: null});
-       // }
+      
      }
    );
 
@@ -72,7 +67,7 @@ class Authentication extends Component
   render()
   {
 
-    console.log("in auth");
+    
 
     //Default Button
     if(this.state.data !== null && this.state.x===0)
@@ -80,8 +75,7 @@ class Authentication extends Component
       const name = this.state.value;
        this.state.cookies.set('name', this.state.value, { path: '/' });
 
-    console.log(this.state.x);
-    console.log(this.state.value);
+   
 
     return(
       <form onSubmit={this.handleSubmit} className = "centered_div">
@@ -122,8 +116,8 @@ class Authentication extends Component
   if(this.state.data !== null && this.state.valid === true)
   {
 
-      console.log("KK"+name);
-    const name = this.state.value;
+      
+     const name = this.state.value;
      this.state.cookies.set('name', this.state.value, { path: '/' });
      this.state.cookies.set('email', this.state.email, { path: '/' });
 

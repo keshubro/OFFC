@@ -52,7 +52,7 @@ ta{
 
 
 .right_div{
-    width: Xu;
+   width: Xu;
    height: Yu;
    position: absolute;
    top: 50%;
@@ -60,6 +60,58 @@ ta{
    margin-left: -(X/2)u;
    margin-top: -(Y/2)u;
 }
+
+.assignToMe_div{
+    width: Xu;
+    height: Yu;
+    position: absolute;
+    top: 67%;
+    left: 43.5%;
+    margin-left: -(X/2)u;
+    margin-top: -(Y/2)u;
+ }
+
+ .assignEventSubmit_div{
+    width: Xu;
+    height: Yu;
+    position: absolute;
+    top: 100%;
+    left: 30%;
+    margin-left: -(X/2)u;
+    margin-top: -(Y/2)u;
+ }
+
+ .assignText_div{
+    width: Xu;
+    height: Yu;
+    position: absolute;
+    top: -50%;
+    left: 30%;
+    margin-left: -(X/2)u;
+    margin-top: -(Y/2)u;
+ }
+
+ .dismiss_div{
+    width: Xu;
+    height: Yu;
+    position: absolute;
+    top: 3%;
+    left: 93%;
+    margin-left: -(X/2)u;
+    margin-top: -(Y/2)u;
+ }
+
+ .assignHead_div{
+    width: Xu;
+    height: Yu;
+    position: absolute;
+    top: 6%;
+    left: 28%;
+    margin-left: -(X/2)u;
+    margin-top: -(Y/2)u;
+    
+ }
+
 
 sev_div
 {

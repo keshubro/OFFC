@@ -41,7 +41,8 @@ class First extends Component
 			selectedRowIds: [],
 			x: 0,
 			selectedIds: [],
-			assignClicked: false
+			assignClicked: false,
+			rowSelected: false
 		};
 	}
 
@@ -52,7 +53,7 @@ class First extends Component
 	
 	handleClick(event, i)
 	{ 
-		// console.log(i);
+		
 		var present = 0;
 		this.state.selectedIds.map((id) => 
 			{i === id ? present = 1 : null}
@@ -60,19 +61,21 @@ class First extends Component
 				
 			
 			
-		
+//TODO ::  Add color to the row when clicked and remove it when clicked again
 		
 		if(present !== 1)
 		{
-			this.setState({selectedIds: [...this.state.selectedIds, i]});
+			this.setState({selectedIds: [...this.state.selectedIds, i], rowSelected: true });
+			
+			
 		}
 		else if(present === 1){
 
 			const index = this.state.selectedIds.indexOf(i);
     
 			if (index !== -1) {
-				console.log(this.state.selectedIds.splice(index, 1));
-				this.setState({selectedIds: this.state.selectedIds});
+				
+				this.setState({selectedIds: this.state.selectedIds, rowSelected: false});
 			}
 		}
 		
@@ -115,15 +118,16 @@ class First extends Component
 	}
 	
 
-	// createCheck()
-	// {
-		
-	// 	return <Checkbox checked = {this.state.isSelected} id = {this.state.x} onChange = {this.handleClick}/>
-		
-	// }
+	isSelected = id => this.state.selectedIds.indexOf(id) !== -1;
+
+	
     
     render()
 	{
+
+		
+		  
+
 		if(this.state.assignClicked === true)
 		{
 			return(
@@ -131,7 +135,7 @@ class First extends Component
 			);
 		}
 		
-		console.log(this.state.selectedIds);
+		
 
         var name =this.state.cookies.get('name');
         
@@ -143,7 +147,7 @@ class First extends Component
 		if(this.state.sev !== null){
 			for(var i = 0; i<this.state.sev.length; i++)
 			{
-				if(this.state.sev[i].id <= this.state.cookies.get('sevlevel'))
+				if(this.state.sev[i].id >= this.state.cookies.get('loggedin_user').severityAccessLevel)
 				{
 					sevcount += this.state.sev[i].count;
 				}
@@ -219,7 +223,7 @@ class First extends Component
 						
 						<TableRow  onClick={event => this.handleClick(event, d.id)}
 											role="checkbox" 
-											selected={this.state.isSelected}
+											selected={this.isSelected(d.id)}
 											hover = {true}
 											
 											>
@@ -252,7 +256,7 @@ class First extends Component
 						
 					<TableRow onClick={event => this.handleClick(event, d.id)}
 										role="checkbox" 
-										selected={this.state.isSelected}
+										selected={this.isSelected(d.id)}
 										hover = {true}
 										
 							   			>
@@ -269,12 +273,7 @@ class First extends Component
 							{ob1}
 							
 						</TableCell>
-						<TableCell>
-						<div>
-							<input type="checkbox" />
-								
-							</div>
-						</TableCell>
+						
 					</TableRow>
 				);
 
@@ -351,7 +350,7 @@ class First extends Component
 									<TableCell >EVENT TIME</TableCell>
 									<TableCell >DATA</TableCell>
 									<TableCell >ASSIGNED TO</TableCell>
-									<TableCell >Assign Selected Events</TableCell> 
+									 
 								</TableRow>
 							</TableHead>
 							<TableBody>

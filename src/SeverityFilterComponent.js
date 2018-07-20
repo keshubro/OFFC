@@ -56,12 +56,13 @@ class SeverityFilter extends Component
          var valuesMapped; var ob; var ob1; 
 
          
-         var sevlevel = this.state.cookies.get('sevlevel');
-         
+        
+         var sev = this.state.cookies.get('loggedin_user').severityAccessLevel;
+
         if(this.state.events !==null && this.state.data !== null)
         {
             var dd = this.state.data.map((d) => {
-                if(d.severity >= sevlevel)
+                if(d.severity >= sev)
                 {
                     val = Object.values(d);
                     keys = Object.keys(d);
