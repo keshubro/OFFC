@@ -48,8 +48,11 @@ class Authentication extends Component
      {
        if(dd.name === this.state.value)
        {
+        <Link to = "/severityevents" />
          this.setState({valid: true, x: 1, value: dd.name, email: dd.email});
          this.state.cookies.set('loggedin_user', dd, { path: '/' });
+
+         
 
        }
       
@@ -67,7 +70,9 @@ class Authentication extends Component
   render()
   {
 
-    
+    this.state.cookies.set('name', 'null', { path: '/' });
+   
+
 
     //Default Button
     if(this.state.data !== null && this.state.x===0)
@@ -106,7 +111,9 @@ class Authentication extends Component
            <input type="text" value={this.state.value} onChange={this.handleChange} />
 
          </label>
-         <input type="submit" value="Submit" />
+         
+          <input type="submit" value="Submit" />
+        
        </form>
        <p><font color="red">Not an authorized user !!</font></p>
       </div>
@@ -133,7 +140,7 @@ class Authentication extends Component
 function Valid()
 {
   return(
-    <Link to = "/details">SHOW EVENTS</Link>
+    <Link to = "/severityevents">SHOW EVENTS</Link>
   );
 }
 

@@ -29,6 +29,7 @@ class First extends Component
 		
 		super();
 		this.assignBtn = this.assignBtn.bind(this);
+		this.clearBtn = this.clearBtn.bind(this);
 		this.state = {
 			data: null,
 		
@@ -42,8 +43,14 @@ class First extends Component
 			x: 0,
 			selectedIds: [],
 			assignClicked: false,
-			rowSelected: false
+			rowSelected: false,
+			yes: false
 		};
+	}
+
+	clearBtn(event)
+	{
+		this.setState({selectedIds: []});
 	}
 
 	assignBtn(event)
@@ -61,22 +68,26 @@ class First extends Component
 				
 			
 			
-//TODO ::  Add color to the row when clicked and remove it when clicked again
+		//If not present
 		
 		if(present !== 1)
 		{
-			this.setState({selectedIds: [...this.state.selectedIds, i], rowSelected: true });
+			this.setState({selectedIds: [...this.state.selectedIds, i]});
+		
 			
 			
 		}
-		else if(present === 1){
 
+		//If already present
+		else if(present === 1){
+			
 			const index = this.state.selectedIds.indexOf(i);
-    
-			if (index !== -1) {
-				
-				this.setState({selectedIds: this.state.selectedIds, rowSelected: false});
-			}
+	
+			
+			this.state.selectedIds.splice(index, 1);
+			this.setState({yes: true});
+			
+			
 		}
 		
 		
@@ -94,39 +105,27 @@ class First extends Component
 	    )
 		.then(data => this.setState({data: data, len: data.length}));
 		
-		
-
-		fetch('http://203.17.194.45/eventApp/events/typeAgg')
-	    .then(results =>
-	      results.json()
-	    )
-		.then(data => this.setState({events: data, evlen: data.length}));
-		
-		
-		  fetch('http://203.17.194.45/eventApp/events/userAgg')
-	    .then(results =>
-	      results.json()
-	    )
-		.then(data => this.setState({myevents: data}));
-
-		
-		fetch('http://203.17.194.45/eventApp/events/sevAgg')
-	    .then(results =>
-	      results.json()
-	    )
-		.then(data => this.setState({sev: data}));
 	}
 	
 
-	isSelected = id => this.state.selectedIds.indexOf(id) !== -1;
-
+	isSelected(id){ 
+		if(this.state.selectedIds.indexOf(id) === -1)
+		{
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+	
 	
     
     render()
 	{
+	
 
 		
-		  
+		this.state.cookies.set('page_name', 'Filter By Severity', { path: '/' });
 
 		if(this.state.assignClicked === true)
 		{
@@ -142,28 +141,8 @@ class First extends Component
         //Variables declaration
         var keys;var extraKeys; var extraValues; var val;
         var extraDatakeys; var extraDatavalues; var extraAsskeys; var extraAssvalues;
-		var valuesMapped; var ob; var ob1; var myeventscount = 0; var sevcount = 0;
+		var valuesMapped; var ob; var ob1;
 
-		if(this.state.sev !== null){
-			for(var i = 0; i<this.state.sev.length; i++)
-			{
-				if(this.state.sev[i].id >= this.state.cookies.get('loggedin_user').severityAccessLevel)
-				{
-					sevcount += this.state.sev[i].count;
-				}
-			}
-		}
-
-		if(this.state.myevents !== null){
-			for(var i = 0; i<this.state.myevents.length; i++)
-			{
-				if(this.state.myevents[i].id === this.state.cookies.get('name'))
-				{
-					
-					myeventscount = this.state.myevents[i].count;
-				}
-			}
-		}
 
 		
 		
@@ -181,6 +160,10 @@ class First extends Component
                 keys = Object.keys(d);
                 extraKeys = keys.splice(4,2);
 				extraValues = val.splice(4,2);
+
+
+				
+				const isSelected = this.isSelected(d.id);
 				
 				
 				if(extraValues[0] !== null && typeof extraValues[0] === 'object'){
@@ -223,7 +206,8 @@ class First extends Component
 						
 						<TableRow  onClick={event => this.handleClick(event, d.id)}
 											role="checkbox" 
-											selected={this.isSelected(d.id)}
+											key = {d.id}
+											selected={isSelected}
 											hover = {true}
 											
 											>
@@ -235,16 +219,9 @@ class First extends Component
 							</TableCell>
 							
 							<TableCell >
-								<Link to = "/assignevent">
-									{ob1}
-								</Link>
-							</TableCell>
-							<TableCell>
-							<div>
-								<input type="checkbox" onChange={ this.handleChecked }/>
 								
-							</div>
-						</TableCell>
+							</TableCell>
+							
 						</TableRow>
 					);
 				}
@@ -256,7 +233,8 @@ class First extends Component
 						
 					<TableRow onClick={event => this.handleClick(event, d.id)}
 										role="checkbox" 
-										selected={this.isSelected(d.id)}
+										key = {d.id}
+										selected={isSelected}
 										hover = {true}
 										
 							   			>
@@ -287,16 +265,16 @@ class First extends Component
                 
                 return(
 
-                    <div>You arent logged in</div>
+                    <div>You are nOt logged in</div>
 
                 );
 
             }
 
-            else if(this.state.cookies.get('name') != 'null' && this.state.events !== null){
+            else if(this.state.cookies.get('name') != 'null'){
 				
 									
-				var yo = this.state.events.map((ev) => <DropdownItem tag="a" href={`/details/${ev.id}`}>{ev.id}({ev.count})</DropdownItem>);
+				
 				if(this.state.myevents !== null){
 				
 					}
@@ -307,38 +285,10 @@ class First extends Component
 						
 
 
-						<Navbar color="light" light expand="md">
-							<div className="container">
-							<Nav navbar>
-							
-							<div className = "center_div">
-							<Link to = "/myevents">
-								<a>Assigned To Me({myeventscount})</a>
-							</Link>
-							</div>
-							<div className = "left_div">
-							<Link to = "/severityevents">
-								<a>Filter By Severity ({sevcount})</a>
-							</Link>
-							</div>
-							
-							
-								<UncontrolledDropdown setActiveFromChild direction = "left" className = "right_div">
-								<DropdownToggle tag="a" className="nav-link" caret>
-									Filter By Events
-								</DropdownToggle>
-								<DropdownMenu>
-									
-									
-									{yo}
-								
-								</DropdownMenu>
-								</UncontrolledDropdown>
-							</Nav>
-							</div>
-						</Navbar>
-						{this.state.selectedIds.length > 0 ? <button type="button" onClick = {this.assignBtn}>Assign The Selected Items</button> : null}
-
+						{this.state.selectedIds.length > 0 ? <div><button type="button" onClick = {this.assignBtn} >Assign The Selected Items({this.state.selectedIds.length})</button></div> : null}
+                        
+                        {this.state.selectedIds.length > 0 ? <button type="button" onClick = {this.clearBtn} >Clear All</button> : null}
+					
 						<Table  multiSelectable={true} onRowSelection={this.onRowSelection}> 
 							<TableHead>
 								<TableRow>

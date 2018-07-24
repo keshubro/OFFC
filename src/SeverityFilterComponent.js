@@ -8,6 +8,8 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Navbar, Nav, NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import {Link} from 'react-router-dom';
+import AssignEvent from './AssignEventComponent';
+import './centered.css';
 
 class SeverityFilter extends Component
 {
@@ -15,11 +17,53 @@ class SeverityFilter extends Component
     constructor(props)
     {
         super(props);
+        this.assignBtn = this.assignBtn.bind(this);
+        this.clearBtn = this.clearBtn.bind(this);
         this.state = {
             cookies: new Cookies,
             events: null,
-            data: null
+            data: null,
+            selectedIds: []
         }
+    }
+
+    assignBtn(event)
+	{
+		this.setState({assignClicked: true});
+	}
+    
+    
+	handleClick(event, i)
+	{ 
+		
+		var present = 0;
+		this.state.selectedIds.map((id) => 
+			{i === id ? present = 1 : null}
+		);
+				
+			
+			
+		//If not present
+		
+		if(present !== 1)
+		{
+			this.setState({selectedIds: [...this.state.selectedIds, i]});
+		
+			
+			
+		}
+
+		//If already present
+		else if(present === 1){
+			
+			const index = this.state.selectedIds.indexOf(i);
+	
+			
+			this.state.selectedIds.splice(index, 1);
+			this.setState({yes: true});
+			
+			
+		}
     }
 
     componentDidMount()
@@ -29,8 +73,8 @@ class SeverityFilter extends Component
         results.json()
         )
         .then(data => this.setState({data: data}));
-        console.log(this.state.data);
-       
+
+        
 		
 		fetch('http://203.17.194.45/eventApp/events/typeAgg')
 	    .then(results =>
@@ -46,8 +90,35 @@ class SeverityFilter extends Component
 		.then(data => this.setState({sev: data}));
     }
 
+
+    clearBtn(event)
+    {
+        
+        this.setState({selectedIds: []});
+    }
+
+    isSelected(id){ 
+		if(this.state.selectedIds.indexOf(id) === -1)
+		{
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+	
+
     render()
     {
+
+        this.state.cookies.set('page_name', 'All Events', { path: '/' });
+
+        if(this.state.assignClicked === true)
+		{
+			return(
+				<AssignEvent selectedIds = {this.state.selectedIds}/>
+			);
+		}
        
        
          //Variables declaration
@@ -69,6 +140,7 @@ class SeverityFilter extends Component
                     extraKeys = keys.splice(4,2);
                     extraValues = val.splice(4,2);
                     
+                    const isSelected = this.isSelected(d.id);
     
                     if(extraValues[0] !== null && typeof extraValues[0] === 'object'){
                         
@@ -103,7 +175,11 @@ class SeverityFilter extends Component
 				    {
                         return(
                             
-                            <TableRow>
+                            <TableRow  onClick={event => this.handleClick(event, d.id)}
+                                        role="checkbox" 
+                                        key = {d.id}
+                                        selected={isSelected}
+                                        hover = {true}>
                                 
                                 {valuesMapped}
                                 
@@ -112,9 +188,7 @@ class SeverityFilter extends Component
                                 </TableCell>
                                 
                                 <TableCell >
-                                    <Link to = "/assignevent">
-                                        {ob1}
-                                    </Link>
+                                    
                                 </TableCell>
                             </TableRow>
                         );
@@ -123,7 +197,12 @@ class SeverityFilter extends Component
                         //If the event has already been assigned, no need to hyperlink to "assignevent" component
                         return(
                                                 
-                            <TableRow>
+                            <TableRow onClick={event => this.handleClick(event, d.id)}
+                                        role="checkbox" 
+                                        key = {d.id}
+                                        selected={isSelected}
+                                        hover = {true}
+                                        >
                                 
                                 {valuesMapped}
                                 
@@ -159,7 +238,11 @@ class SeverityFilter extends Component
                 return(
                     <div>
                         
+                    {this.state.selectedIds.length > 0 ? <div><button type="button" onClick = {this.assignBtn} >Assign The Selected Items({this.state.selectedIds.length})</button></div> : null}
                         
+                    {this.state.selectedIds.length > 0 ? <button type="button" onClick = {this.clearBtn} >Clear All</button> : null}
+                        
+
                         <Table > 
                             <TableHead>
                                 <TableRow>

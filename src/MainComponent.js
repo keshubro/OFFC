@@ -19,7 +19,7 @@ class Main extends Component
   {
     const theme = createMuiTheme();
 
-    console.log("in main");
+    
 
     const LoginPage = () => {
     return (
@@ -39,7 +39,7 @@ class Main extends Component
             <Route path = '/login' component = {LoginPage} />
             
             <Route exact path = '/details' component = {First} />
-            
+           
             <Route path = '/profile' component = {Profile} />
             <Route path = '/users' component = {Users} />
             <Route path = '/details/:eventId' component = {EventsFilter} />

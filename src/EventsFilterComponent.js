@@ -8,6 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Navbar, Nav, NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import {Link} from 'react-router-dom';
+import AssignEvent from './AssignEventComponent';
 
 class EventsFilter extends Component
 {
@@ -15,24 +16,31 @@ class EventsFilter extends Component
     constructor(props)
     {
         super(props);
+        this.handleClick = this.handleClick.bind(this);
+        this.assignBtn = this.assignBtn.bind(this);
+        this.clearBtn = this.clearBtn.bind(this);   
         this.state = {
             cookies: new Cookies,
             events: null,
-            data: null
+            data: null,
+            selectedIds: [],
+            assignClicked: false
         }
     }
 
     componentDidMount()
 	{
+
+        this.state.cookies.set('page_name', 'Filter By Severity', { path: '/' });
        
-		console.log("componentDidMount");
+		
 		fetch('http://203.17.194.45/eventApp/events/typeAgg')
 	    .then(results =>
 	      results.json()
 	    )
         .then(data => this.setState({events: data}));
         
-        console.log("componentDidMount");
+        
 		  fetch('http://203.17.194.45/eventApp/events/all')
 	    .then(results =>
 	      results.json()
@@ -40,10 +48,71 @@ class EventsFilter extends Component
 		.then(data => this.setState({data: data, len: data.length}));
     }
 
+    assignBtn(event)
+	{
+		this.setState({assignClicked: true});
+	}
+    
+
+    handleClick(event, i)
+	{ 
+		
+		var present = 0;
+		this.state.selectedIds.map((id) => 
+			{i === id ? present = 1 : null}
+		);
+				
+			
+			
+		//If not present
+		
+		if(present !== 1)
+		{
+			this.setState({selectedIds: [...this.state.selectedIds, i]});
+		
+			
+			
+		}
+
+		//If already present
+		else if(present === 1){
+			
+			const index = this.state.selectedIds.indexOf(i);
+	
+			
+			this.state.selectedIds.splice(index, 1);
+			this.setState({yes: true});
+		
+			
+		}
+    }
+
+
+    clearBtn(event)
+    {
+        
+        this.setState({selectedIds: []});
+    }
+
+    isSelected(id){ 
+		if(this.state.selectedIds.indexOf(id) === -1)
+		{
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+
     render()
     {
 
-       
+        if(this.state.assignClicked === true)
+		{
+			return(
+				<AssignEvent selectedIds = {this.state.selectedIds}/>
+			);
+		}
        
         var str = this.props.location.pathname.substring(9);
 
@@ -72,6 +141,8 @@ class EventsFilter extends Component
                     keys = Object.keys(d);
                     extraKeys = keys.splice(4,2);
                     extraValues = val.splice(4,2);
+
+                    const isSelected = this.isSelected(d.id);
                     
     
                     if(extraValues[0] !== null && typeof extraValues[0] === 'object'){
@@ -107,7 +178,12 @@ class EventsFilter extends Component
 				    {
                         return(
                             
-                            <TableRow>
+                            <TableRow onClick={event => this.handleClick(event, d.id)}
+                                        role="checkbox" 
+                                        key = {d.id}
+                                        selected={isSelected}
+                                        hover = {true}
+                                        >
                                 
                                 {valuesMapped}
                                 
@@ -116,9 +192,7 @@ class EventsFilter extends Component
                                 </TableCell>
                                 
                                 <TableCell >
-                                    <Link to = "/assignevent">
-                                        {ob1}
-                                    </Link>
+                                    
                                 </TableCell>
                             </TableRow>
                         );
@@ -126,7 +200,12 @@ class EventsFilter extends Component
                         
                     return(
                         
-                        <TableRow>
+                        <TableRow onClick={event => this.handleClick(event, d.id)}
+                                    role="checkbox" 
+                                    key = {d.id}
+                                    selected={isSelected}
+                                    hover = {true}
+                                    >
                             
                             {valuesMapped}
                             
@@ -160,6 +239,9 @@ class EventsFilter extends Component
                     return(
                         <div>
                            
+                    {this.state.selectedIds.length > 0 ? <div><button type="button" onClick = {this.assignBtn} >Assign The Selected Items({this.state.selectedIds.length})</button></div> : null}
+                        
+                        {this.state.selectedIds.length > 0 ? <button type="button" onClick = {this.clearBtn} >Clear All</button> : null}
                            
                             <Table > 
                                 <TableHead>
@@ -188,7 +270,7 @@ class EventsFilter extends Component
       
 
 
-        //    return(<div>There are {count} events of "{str}" type</div>);
+        
         }
 
         return(<div>Loading...</div>);
@@ -198,10 +280,10 @@ class EventsFilter extends Component
 const Convert = ({value}) => {
 	
     
-	if(!isNaN(value))
+	if(!isNaN(value) && value.toString().length>=10)
 	{
 		
-		if(value.toString().length)
+		if(value.toString().length<13)
 		{
 			value = value * 1000;
 		}

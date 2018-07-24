@@ -24,20 +24,22 @@ class Profile extends Component
       results.json()
     )
     .then(data => this.setState({data: data, len: data.length}));
-    console.log(this.state.data);
+    
   }
 
   render()
   {
     const cookies = new Cookies();
 
-    console.log("in profile");
+    cookies.set('page_name', 'Filter By Severity', { path: '/' });
+
+    
     const name = cookies.get('name');
     const email = cookies.get('email');
-    console.log(name);
+  
     if(name != 'null')
     {
-      console.log("Not null");
+      
 
       return(
 
@@ -52,7 +54,6 @@ class Profile extends Component
     }
 
     else if(name == 'null'){
-      console.log("NULL");
 
     return(
       <div>You are not logged in</div>

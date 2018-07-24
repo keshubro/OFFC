@@ -33,7 +33,7 @@ class AssignEvent extends Component
 
     assignToMeClicked()
     {
-        console.log("Clicked");
+       
 
         var loggedin_user = this.state.cookies.get('loggedin_user');
 
@@ -61,10 +61,10 @@ class AssignEvent extends Component
             fetch(url, fetchData)
             .then(function() {
                 // Handle response you get from the server
-                console.log("Done");
+              
             })
             .catch(function(error){
-            console.log(error);
+            
             });
         
         });
@@ -114,7 +114,7 @@ class AssignEvent extends Component
         this.props.selectedIds.map((s) => {
 
 
-           console.log(s);
+           
 
             if(this.state.data !== null)
             {
@@ -135,7 +135,7 @@ class AssignEvent extends Component
 
                     const url = 'http://203.17.194.45/eventApp/events/' +s+ '/assign';
         
-                    console.log(url);        
+                       
                     let myHeaders = new Headers();
                     myHeaders.append('Content-Type', 'application/json');
 
@@ -151,10 +151,10 @@ class AssignEvent extends Component
                     fetch(url, fetchData)
                     .then(function() {
                         // Handle response you get from the server
-                        console.log("Done");
+                        
                     })
                     .catch(function(error){
-                    console.log(error);
+                   
                     });
 
 

@@ -22,7 +22,6 @@ class SignUp extends Component
 
     handleChange(event)
     {
-        console.log("NAME: " + this.state.name);
         const target = event.target;
         const value = target.value;
         const name = target.name;
@@ -60,7 +59,6 @@ myHeaders.append('Content-Type', 'application/json');
         fetch(url, fetchData)
         .then(function() {
             // Handle response you get from the server
-            console.log("Done");
         })
         .catch(function(error){
 console.log(error);
